@@ -38,10 +38,6 @@ public class Comments {
         this.changeContent(content);
         this.updateDate();
     }
-
-    public void delete(){
-        this.deletedAt = new Date();
-    }
     private void changeContent(String content){
         this.content = content;
     }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Validated
@@ -37,12 +38,10 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
-    @GetMapping
     public CommentsListResponseDto getComment(Long postId){
         return new CommentsListResponseDto(commentsRepository.findByPostId(postId));
     }
 
-    @PatchMapping("/{commentId}")
     public CommentsListResponseDto patchComment(Long postId, Long commentId, String newContent){
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));
@@ -53,10 +52,16 @@ public class CommentService {
         return getComment(postId);
     }
 
-    @DeleteMapping("/{commentId}")
     public void deleteComment(Long commentId){
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));
         commentsRepository.delete(comment);
+    }
+
+    public void deleteAllCommentFromPost(Long postId){
+        List<Comments> commentsList = commentsRepository.findByPostId(postId);
+        for (Comments comment : commentsList) {
+            commentsRepository.delete(comment);
+        }
     }
 }

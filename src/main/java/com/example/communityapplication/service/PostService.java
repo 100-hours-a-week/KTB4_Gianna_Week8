@@ -5,6 +5,7 @@ import com.example.communityapplication.dto.PostUpdateResponseDto;
 import com.example.communityapplication.dto.PostsListResponseDto;
 import com.example.communityapplication.entity.Posts;
 import com.example.communityapplication.entity.Users;
+import com.example.communityapplication.repository.CommentsRepository;
 import com.example.communityapplication.repository.PostsRepository;
 import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import java.util.List;
 public class PostService {
     private final UsersRepository usersRepository;
     private final PostsRepository postsRepository;
+
+    private final CommentService commentService;
 
     public PostResponseDto createPost(Long userId, Date date, String title, String content, String file) {
         Users user = usersRepository.findById(userId)
@@ -58,6 +61,9 @@ public class PostService {
 
 
     public void deletePost(Long postId) {
+        //댓글 먼저 전부 삭제 후 -> 게시글 삭제
+        commentService.deleteAllCommentFromPost(postId);
+
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
         postsRepository.delete(post);
