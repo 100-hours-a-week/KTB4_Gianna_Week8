@@ -40,13 +40,12 @@ public class CommentsController {
     public ResponseEntity<ApiResponse<CommentsListResponseDto>> patchComment(@PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody CommentRequestDto request){
         CommentsListResponseDto commentResponse = commentService.patchComment(postId, commentId, request.getContent());
         return ResponseEntity
-                .ok(ApiResponse.of("patch_success", commentResponse));
+                .ok(ApiResponse.of("comment_patch_success", commentResponse));
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<EmptyResponseDto>> deleteComment(@PathVariable Long commentId){
         commentService.deleteComment(commentId);
-        return ResponseEntity
-                .ok(ApiResponse.of("delete_success", new EmptyResponseDto()));
+        return ResponseEntity.noContent().build();
     }
 }
