@@ -54,11 +54,9 @@ public class CommentService {
     }
 
     @DeleteMapping("/{commentId}")
-    public void deleteComment(Long postId, Long commentId){
+    public void deleteComment(Long commentId){
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));
-
-        comment.delete();
-        commentsRepository.save(comment);
+        commentsRepository.delete(comment);
     }
 }
