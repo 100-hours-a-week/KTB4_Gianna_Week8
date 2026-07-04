@@ -23,14 +23,14 @@ public class PostService {
 
     private final CommentService commentService;
 
-    public PostResponseDto createPost(Long userId, Date date, String title, String content, String file) {
+    public PostResponseDto createPost(Long userId, String title, String content, String file) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
         String author = user.getNickname();
         Posts post = new Posts(
                 userId,
                 author,
-                date,
+                new Date(),
                 title,
                 content,
                 file

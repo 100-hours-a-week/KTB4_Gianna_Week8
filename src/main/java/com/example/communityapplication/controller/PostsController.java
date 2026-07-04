@@ -16,7 +16,7 @@ public class PostsController {
 
     @PostMapping("/{userId}")
     public ApiResponse<PostResponseDto> createPost(@PathVariable Long userId, @Valid @RequestBody PostRequestDto request) {
-        PostResponseDto postResponse = postService.createPost(userId, request.getDate(),request.getTitle(),request.getContent(),request.getFile());
+        PostResponseDto postResponse = postService.createPost(userId, request.getTitle(),request.getContent(),request.getFile());
         return ApiResponse.of("post_success", postResponse);
     }
 
