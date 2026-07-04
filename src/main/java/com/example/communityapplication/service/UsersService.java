@@ -60,7 +60,7 @@ public class UsersService {
         usersRepository.save(user);
     }
 
-    public void updatePassword( Long userId,  String newPassword){
+    public void updatePassword(Long userId,  String newPassword){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
         user.changePassword(newPassword);
