@@ -9,6 +9,7 @@ import com.example.communityapplication.repository.CommentsRepository;
 import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
+@Transactional
 public class CommentService {
     private final CommentsRepository commentsRepository;
     private final UsersRepository usersRepository;
@@ -35,6 +37,7 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
+    @Transactional(readOnly = true)
     public CommentsListResponseDto getComment(Long postId){
         return new CommentsListResponseDto(commentsRepository.findByPostId(postId));
     }

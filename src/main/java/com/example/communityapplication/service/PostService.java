@@ -9,6 +9,7 @@ import com.example.communityapplication.repository.PostsRepository;
 import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
+@Transactional
 public class PostService {
     private final UsersRepository usersRepository;
     private final PostsRepository postsRepository;
@@ -39,11 +41,13 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
+    @Transactional(readOnly = true)
     public PostsListResponseDto getPostList() {
         List<Posts> postList = postsRepository.findAll();
         return new PostsListResponseDto(postList);
     }
 
+    @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
@@ -58,7 +62,6 @@ public class PostService {
         return new PostUpdateResponseDto(post);
     }
 
-
     public void deletePost(Long postId) {
         //댓글 먼저 전부 삭제 후 -> 게시글 삭제
         commentService.deleteAllCommentFromPost(postId);
@@ -71,7 +74,7 @@ public class PostService {
     public void deleteAllPostFromUser(Long userId){
         List<Posts> postList = postsRepository.findByUserId(userId);
         for (Posts post : postList) {
-            this.deletePost(post.getId());
+            postsRepository.delete(post);
         }
     }
 }

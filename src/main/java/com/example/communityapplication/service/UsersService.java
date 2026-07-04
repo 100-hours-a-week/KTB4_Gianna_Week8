@@ -8,6 +8,7 @@ import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @Service
 @Validated
 @RequiredArgsConstructor
+@Transactional
 public class UsersService {
     private final UsersRepository usersRepository;
 
@@ -38,6 +40,7 @@ public class UsersService {
         return new LoginResponseDto(user);
     }
 
+    @Transactional(readOnly = true)
     public UserResponseDto getUser(Long userId){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found from repository by id"));
@@ -46,6 +49,7 @@ public class UsersService {
         return new UserResponseDto(user);
     }
 
+    @Transactional(readOnly = true)
     public ProfilePictureResponseDto getUserProfilePicture(Long userId){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
