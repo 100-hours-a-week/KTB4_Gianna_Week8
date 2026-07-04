@@ -40,9 +40,5 @@ public class Users {
     public void changeProfilePicture(String profile_picture) {
         this.profilePicture = profile_picture;
     }
-    public void delete(){
-        this.email = "";
-        this.nickname="";
-        this.deletedAt = new Date();
-    }
+
 }

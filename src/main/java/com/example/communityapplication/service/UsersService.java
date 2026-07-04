@@ -75,7 +75,6 @@ public class UsersService {
     public void deleteUser(Long userId){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found - cannot delete user"));
-        user.delete();
-        usersRepository.save(user);
+        usersRepository.delete(user);
     }
 }
