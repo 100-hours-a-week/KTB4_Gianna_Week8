@@ -40,10 +40,6 @@ public class Posts {
         this.deletedAt = null;
     }
 
-    public void deletePost(){
-        this.deletedAt = new Date();
-    }
-
     public void updatePost(String newTitle, String newContent, String newFile){
         if(newTitle != null && !this.title.equals(newTitle)) this.changeTitle(newTitle);
         if(newContent != null && !this.content.equals(newContent)) this.changeContent(newContent);

@@ -59,7 +59,7 @@ public class PostService {
 
     public void deletePost(Long postId) {
         Posts post = postsRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
-        post.deletePost();
+                .orElseThrow(() -> new IllegalArgumentException("post not found"));
+        postsRepository.delete(post);
     }
 }
