@@ -46,13 +46,13 @@ public class PostService {
 
     public PostResponseDto getPost(Long postId) {
         Posts post = postsRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+                .orElseThrow(() -> new IllegalArgumentException("post not found"));
         return new PostResponseDto(post);
     }
 
     public PostUpdateResponseDto updatePost(Long postId, String newTitle, String newContent, String newFile) {
         Posts post = postsRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+                .orElseThrow(() -> new IllegalArgumentException("post not found - post update unavailable"));
         post.updatePost(newTitle, newContent,  newFile);
         postsRepository.save(post);
         return new PostUpdateResponseDto(post);

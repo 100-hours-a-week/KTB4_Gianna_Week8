@@ -41,9 +41,9 @@ public class Posts {
     }
 
     public void updatePost(String newTitle, String newContent, String newFile){
-        if(newTitle != null && !this.title.equals(newTitle)) this.changeTitle(newTitle);
-        if(newContent != null && !this.content.equals(newContent)) this.changeContent(newContent);
-        if(newFile != null && !this.file.equals(newFile)) this.changeFile(newFile);
+        if(newTitle != null && !newTitle.equals(this.title)) this.changeTitle(newTitle);
+        if(newContent != null && !newContent.equals(this.content)) this.changeContent(newContent);
+        if(newFile != null && !newFile.equals(this.file)) this.changeFile(newFile);
         this.updatedAt = new Date();
     }
 
