@@ -1,9 +1,0 @@
-package com.example.communityapplication.repository;
-
-import com.example.communityapplication.entity.DeletedUsers;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface DeletedUsersRepository extends JpaRepository<DeletedUsers, Long> {
-}

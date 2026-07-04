@@ -4,9 +4,7 @@ import com.example.communityapplication.dto.LoginResponseDto;
 
 import com.example.communityapplication.dto.ProfilePictureResponseDto;
 import com.example.communityapplication.dto.UserResponseDto;
-import com.example.communityapplication.entity.DeletedUsers;
 import com.example.communityapplication.entity.Users;
-import com.example.communityapplication.repository.DeletedUsersRepository;
 import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
-    private final DeletedUsersRepository deletedUsersRepository;
 
     public UserResponseDto create(String email, String password, String nickname, String profilePicture) throws IllegalAccessException {
         if(usersRepository.findByEmail(email) != null) throw new IllegalAccessException("email exists");
@@ -77,10 +74,8 @@ public class UsersService {
 
     public void deleteUser(Long userId){
         Users user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
-        DeletedUsers deletedUsers = new DeletedUsers(user.getId(),user.getEmail(),user.getNickname());
+                .orElseThrow(() -> new IllegalArgumentException("user not found - cannot delete user"));
         user.delete();
         usersRepository.save(user);
-        deletedUsersRepository.save(deletedUsers);
     }
 }
