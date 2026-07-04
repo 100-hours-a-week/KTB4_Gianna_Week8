@@ -19,10 +19,11 @@ public class UserRequestDto {
     @NotBlank
     private String password;
 
-    @Size(min = 2)
+    @Size(min = 1)
     @Size(max = 10)
     @NotBlank
     private String nickname;
 
+    @NotBlank
     private String profilePicture;
 }
