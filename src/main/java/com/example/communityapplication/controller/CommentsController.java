@@ -21,7 +21,7 @@ public class CommentsController {
 
     @PostMapping("/{userId}")
     public ApiResponse<CommentResponseDto> createComment(@PathVariable Long postId, @PathVariable Long userId, @Valid @RequestBody CommentRequestDto request){
-        CommentResponseDto commentResponse = commentService.createComment(postId, userId, request.getContent(), request.getCreatedAt());
+        CommentResponseDto commentResponse = commentService.createComment(postId, userId, request.getContent());
         return ApiResponse.of("post_success", commentResponse);
     }
 

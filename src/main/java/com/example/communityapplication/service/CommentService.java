@@ -10,9 +10,6 @@ import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.Date;
 import java.util.List;
@@ -24,15 +21,15 @@ public class CommentService {
     private final CommentsRepository commentsRepository;
     private final UsersRepository usersRepository;
 
-    public CommentResponseDto createComment(Long postId, Long userId, String content, Date createdAt){
+    public CommentResponseDto createComment(Long postId, Long userId, String content){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));
         Comments comment = new Comments(
                 postId,
                 userId,
                 user.getNickname(),
-               content,
-                createdAt
+                content,
+                new Date()
         );
         commentsRepository.save(comment);
         return new CommentResponseDto(comment);
