@@ -18,6 +18,8 @@ import java.util.Optional;
 public class UsersService {
     private final UsersRepository usersRepository;
 
+    private final PostService postService;
+
     public UserResponseDto create(String email, String password, String nickname, String profilePicture) throws IllegalAccessException {
         if(usersRepository.findByEmail(email) != null) throw new IllegalAccessException("email exists");
         if(usersRepository.findByNickname(nickname) != null) throw new IllegalArgumentException("nickname exists");
@@ -67,12 +69,13 @@ public class UsersService {
 
     public void updateProfilePicture( Long userId,  String newProfilePicture){
         Users user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+                .orElseThrow(() -> new IllegalArgumentException("user profile picture not found"));
         user.changeProfilePicture(newProfilePicture);
         usersRepository.save(user);
     }
 
     public void deleteUser(Long userId){
+        postService.deleteAllPostFromUser(userId);
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found - cannot delete user"));
         usersRepository.delete(user);

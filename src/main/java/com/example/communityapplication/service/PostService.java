@@ -5,7 +5,6 @@ import com.example.communityapplication.dto.PostUpdateResponseDto;
 import com.example.communityapplication.dto.PostsListResponseDto;
 import com.example.communityapplication.entity.Posts;
 import com.example.communityapplication.entity.Users;
-import com.example.communityapplication.repository.CommentsRepository;
 import com.example.communityapplication.repository.PostsRepository;
 import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,5 +66,12 @@ public class PostService {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
         postsRepository.delete(post);
+    }
+
+    public void deleteAllPostFromUser(Long userId){
+        List<Posts> postList = postsRepository.findByUserId(userId);
+        for (Posts post : postList) {
+            this.deletePost(post.getId());
+        }
     }
 }
