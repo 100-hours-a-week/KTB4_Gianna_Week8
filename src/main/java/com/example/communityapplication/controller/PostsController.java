@@ -44,12 +44,14 @@ public class PostsController {
     @PatchMapping("/{postId}")
     public ResponseEntity<ApiResponse<PostUpdateResponseDto>> updatePost(@PathVariable Long postId, @Valid  @RequestBody PostUpdateRequestDto request) {
         PostUpdateResponseDto postResponse = postService.updatePost(postId, request.getTitle(),request.getContent(),request.getFile());
-        return ResponseEntity.ok(ApiResponse.of("patch_success", postResponse));
+        return ResponseEntity
+                .ok(ApiResponse.of("patch_success", postResponse));
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<EmptyResponseDto>> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
-        return ResponseEntity.ok(ApiResponse.of("delete_success", new EmptyResponseDto()));
+        return ResponseEntity
+                .ok(ApiResponse.of("delete_success", new EmptyResponseDto()));
     }
 }

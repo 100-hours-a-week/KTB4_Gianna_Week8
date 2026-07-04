@@ -8,6 +8,8 @@ import com.example.communityapplication.response.ApiResponse;
 import com.example.communityapplication.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,26 +22,31 @@ public class CommentsController {
     private final CommentService commentService;
 
     @PostMapping("/{userId}")
-    public ApiResponse<CommentResponseDto> createComment(@PathVariable Long postId, @PathVariable Long userId, @Valid @RequestBody CommentRequestDto request){
+    public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(@PathVariable Long postId, @PathVariable Long userId, @Valid @RequestBody CommentRequestDto request){
         CommentResponseDto commentResponse = commentService.createComment(postId, userId, request.getContent());
-        return ApiResponse.of("post_success", commentResponse);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.of("post_success", commentResponse));
     }
 
     @GetMapping
-    public ApiResponse<CommentsListResponseDto> getComment(@PathVariable Long postId){
+    public ResponseEntity<ApiResponse<CommentsListResponseDto>> getComment(@PathVariable Long postId){
         CommentsListResponseDto commentResponse = commentService.getComment(postId);
-        return ApiResponse.of("get_success", commentResponse);
+        return ResponseEntity
+                .ok(ApiResponse.of("get_success", commentResponse));
     }
 
     @PatchMapping("/{commentId}")
-    public ApiResponse<CommentsListResponseDto> patchComment(@PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody CommentRequestDto request){
+    public ResponseEntity<ApiResponse<CommentsListResponseDto>> patchComment(@PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody CommentRequestDto request){
         CommentsListResponseDto commentResponse = commentService.patchComment(postId, commentId, request.getContent());
-        return ApiResponse.of("patch_success", commentResponse);
+        return ResponseEntity
+                .ok(ApiResponse.of("patch_success", commentResponse));
     }
 
     @DeleteMapping("/{commentId}")
-    public ApiResponse<EmptyResponseDto> deleteComment(@PathVariable Long commentId){
+    public ResponseEntity<ApiResponse<EmptyResponseDto>> deleteComment(@PathVariable Long commentId){
         commentService.deleteComment(commentId);
-        return ApiResponse.of("delete_success", new EmptyResponseDto());
+        return ResponseEntity
+                .ok(ApiResponse.of("delete_success", new EmptyResponseDto()));
     }
 }
