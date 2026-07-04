@@ -61,21 +61,18 @@ public class UsersService {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
         user.changeNickname(newNickname);
-        usersRepository.save(user);
     }
 
     public void updatePassword(Long userId,  String newPassword){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
         user.changePassword(newPassword);
-        usersRepository.save(user);
     }
 
     public void updateProfilePicture( Long userId,  String newProfilePicture){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user profile picture not found"));
         user.changeProfilePicture(newProfilePicture);
-        usersRepository.save(user);
     }
 
     public void deleteUser(Long userId){

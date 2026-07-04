@@ -58,7 +58,6 @@ public class PostService {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found - post update unavailable"));
         post.updatePost(newTitle, newContent,  newFile);
-        postsRepository.save(post);
         return new PostUpdateResponseDto(post);
     }
 

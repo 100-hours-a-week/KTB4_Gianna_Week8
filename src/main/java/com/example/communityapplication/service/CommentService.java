@@ -45,10 +45,7 @@ public class CommentService {
     public CommentsListResponseDto patchComment(Long postId, Long commentId, String newContent){
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));
-
         comment.update(newContent);
-        commentsRepository.save(comment);
-
         return getComment(postId);
     }
 
