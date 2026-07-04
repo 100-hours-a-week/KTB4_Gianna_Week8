@@ -3,6 +3,7 @@ package com.example.communityapplication.controller;
 import com.example.communityapplication.dto.CommentRequestDto;
 import com.example.communityapplication.dto.CommentResponseDto;
 import com.example.communityapplication.dto.CommentsListResponseDto;
+import com.example.communityapplication.dto.EmptyResponseDto;
 import com.example.communityapplication.response.ApiResponse;
 import com.example.communityapplication.service.CommentService;
 import jakarta.validation.Valid;
@@ -37,7 +38,8 @@ public class CommentsController {
     }
 
     @DeleteMapping("/{commentId}")
-    public void deleteComment( @PathVariable Long commentId){
+    public ApiResponse<EmptyResponseDto> deleteComment(@PathVariable Long commentId){
         commentService.deleteComment(commentId);
+        return ApiResponse.of("delete_success", new EmptyResponseDto());
     }
 }
