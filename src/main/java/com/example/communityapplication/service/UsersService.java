@@ -6,7 +6,10 @@ import com.example.communityapplication.dto.ProfilePictureResponseDto;
 import com.example.communityapplication.dto.UserResponseDto;
 import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.UsersRepository;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -19,27 +22,34 @@ import java.util.Optional;
 @Transactional
 public class UsersService {
     private final UsersRepository usersRepository;
-
     private final PostService postService;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponseDto create(String email, String password, String nickname, String profilePicture) throws IllegalAccessException {
-        if(usersRepository.findByEmail(email) != null) throw new IllegalAccessException("email exists");
-        if(usersRepository.findByNickname(nickname) != null) throw new IllegalArgumentException("nickname exists");
+        Optional<Users> duplicateEmailUser = usersRepository.findByEmail(email);
+        Optional<Users> duplicateNicknameUser = usersRepository.findByNickname(nickname);
+        if(duplicateEmailUser.isPresent()){
+            throw new IllegalAccessException("signup unavailable - existing email");
+        } else if(duplicateNicknameUser.isPresent()){
+            throw new IllegalAccessException("signup unavailable - existing nickname");
+        }
 
-        Users user = new Users(email, password, nickname, profilePicture);
+        String encryptedPassword = passwordEncoder.encode(password);
+        Users user = new Users(email, encryptedPassword, nickname, profilePicture);
         usersRepository.save(user);
         return new UserResponseDto(user);
     }
 
     public LoginResponseDto userLogin(String email, String password) throws IllegalAccessException {
-        Optional<Users> nullableUser = Optional.ofNullable(usersRepository.findByEmail(email));
-        nullableUser.orElseThrow(()-> new IllegalArgumentException("no such user"));
+        Optional<Users> existingUser =  usersRepository.findByEmail(email);
+        if(existingUser.isEmpty()) throw new IllegalArgumentException("login fail - user does not exist");
 
-        Users user = nullableUser.get();
-        if(!password.equals(user.getPassword())) throw new IllegalAccessException("password incorrect");
-        return new LoginResponseDto(user);
+        Users existingUserInfo = existingUser.get();
+        if(!passwordEncoder.matches(password, existingUserInfo.getPassword())) throw new IllegalAccessException("login fail - password incorrect");
+        return new LoginResponseDto(existingUserInfo);
     }
 
+    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long userId){
         Users user = usersRepository.findById(userId)
@@ -49,6 +59,7 @@ public class UsersService {
         return new UserResponseDto(user);
     }
 
+    @PreAuthorize("@userAuthChecker.isMember(authentication.name)")
     @Transactional(readOnly = true)
     public ProfilePictureResponseDto getUserProfilePicture(Long userId){
         Users user = usersRepository.findById(userId)
@@ -57,24 +68,30 @@ public class UsersService {
         return new ProfilePictureResponseDto(user.getProfilePicture());
     }
 
+    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     public void updateNickname(Long userId, String newNickname){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
         user.changeNickname(newNickname);
     }
 
+    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     public void updatePassword(Long userId,  String newPassword){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
-        user.changePassword(newPassword);
+
+        String encryptedPassword = passwordEncoder.encode(newPassword);
+        user.changePassword(encryptedPassword);
     }
 
+    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     public void updateProfilePicture( Long userId,  String newProfilePicture){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user profile picture not found"));
         user.changeProfilePicture(newProfilePicture);
     }
 
+    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     public void deleteUser(Long userId){
         postService.deleteAllPostFromUser(userId);
         Users user = usersRepository.findById(userId)

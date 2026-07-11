@@ -8,6 +8,7 @@ import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.CommentsRepository;
 import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,7 @@ public class CommentService {
     private final CommentsRepository commentsRepository;
     private final UsersRepository usersRepository;
 
+    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     public CommentResponseDto createComment(Long postId, Long userId, String content){
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));
@@ -37,18 +39,21 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
+    @PreAuthorize("@userAuthChecker.isMember(authentication.name)")
     @Transactional(readOnly = true)
     public CommentsListResponseDto getComment(Long postId){
         return new CommentsListResponseDto(commentsRepository.findByPostId(postId));
     }
 
+    @PreAuthorize("@commentAuthChecker.isOwner(#commentId, authentication.name)")
     public CommentsListResponseDto patchComment(Long postId, Long commentId, String newContent){
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));
         comment.update(newContent);
-        return getComment(postId);
+        return new CommentsListResponseDto(commentsRepository.findByPostId(postId));
     }
 
+    @PreAuthorize("@commentAuthChecker.isOwner(#commentId, authentication.name)")
     public void deleteComment(Long commentId){
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found"));

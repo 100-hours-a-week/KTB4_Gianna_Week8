@@ -8,6 +8,7 @@ import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.PostsRepository;
 import com.example.communityapplication.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,7 @@ public class PostService {
 
     private final CommentService commentService;
 
+    @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     public PostResponseDto createPost(Long userId, String title, String content, String file) {
         Users user = usersRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -41,12 +43,14 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
+    @PreAuthorize("@userAuthChecker.isMember(authentication.name)")
     @Transactional(readOnly = true)
     public PostsListResponseDto getPostList() {
         List<Posts> postList = postsRepository.findAll();
         return new PostsListResponseDto(postList);
     }
 
+    @PreAuthorize("@userAuthChecker.isMember(authentication.name)")
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         Posts post = postsRepository.findById(postId)
@@ -54,6 +58,7 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
+    @PreAuthorize("@postAuthChecker.isOwner(#postId, authentication.name)")
     public PostUpdateResponseDto updatePost(Long postId, String newTitle, String newContent, String newFile) {
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("post not found - post update unavailable"));
@@ -61,6 +66,7 @@ public class PostService {
         return new PostUpdateResponseDto(post);
     }
 
+    @PreAuthorize("@postAuthChecker.isOwner(#postId, authentication.name)")
     public void deletePost(Long postId) {
         //댓글 먼저 전부 삭제 후 -> 게시글 삭제
         commentService.deleteAllCommentFromPost(postId);
