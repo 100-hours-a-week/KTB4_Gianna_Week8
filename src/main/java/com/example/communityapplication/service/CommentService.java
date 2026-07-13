@@ -39,7 +39,6 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
-    @PreAuthorize("@userAuthChecker.isMember(authentication.name)")
     @Transactional(readOnly = true)
     public CommentsListResponseDto getComment(Long postId){
         return new CommentsListResponseDto(commentsRepository.findByPostId(postId));
@@ -60,6 +59,7 @@ public class CommentService {
         commentsRepository.delete(comment);
     }
 
+    @PreAuthorize("@postAuthChecker.isOwner(#postId, authentication.name)")
     public void deleteAllCommentFromPost(Long postId){
         List<Comments> commentsList = commentsRepository.findByPostId(postId);
         for (Comments comment : commentsList) {

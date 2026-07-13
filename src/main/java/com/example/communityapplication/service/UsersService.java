@@ -59,7 +59,6 @@ public class UsersService {
         return new UserResponseDto(user);
     }
 
-    @PreAuthorize("@userAuthChecker.isMember(authentication.name)")
     @Transactional(readOnly = true)
     public ProfilePictureResponseDto getUserProfilePicture(Long userId){
         Users user = usersRepository.findById(userId)

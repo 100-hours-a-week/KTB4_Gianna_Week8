@@ -12,10 +12,6 @@ import java.util.Optional;
 public class UserAuthChecker {
     private final UsersRepository usersRepository;
 
-    public boolean isMember (String name){
-        Optional<Users> user = usersRepository.findByEmail(name);
-        return user.isEmpty();
-    }
     public boolean isOwner(Long userId, String name) {
         Optional<Users> targetUser = usersRepository.findById(userId);
         Optional<Users> user = usersRepository.findByEmail(name);

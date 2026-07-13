@@ -43,14 +43,12 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
-    @PreAuthorize("@userAuthChecker.isMember(authentication.name)")
     @Transactional(readOnly = true)
     public PostsListResponseDto getPostList() {
         List<Posts> postList = postsRepository.findAll();
         return new PostsListResponseDto(postList);
     }
 
-    @PreAuthorize("@userAuthChecker.isMember(authentication.name)")
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         Posts post = postsRepository.findById(postId)
