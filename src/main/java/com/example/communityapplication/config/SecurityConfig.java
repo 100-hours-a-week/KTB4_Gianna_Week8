@@ -29,7 +29,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http){
         //접근 허용 제한 - URL 기반 보안
         http
-                .csrf(csrf->csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers( "/users/login", "/users/signup", "/login-process").permitAll() // 모두에게 허용
