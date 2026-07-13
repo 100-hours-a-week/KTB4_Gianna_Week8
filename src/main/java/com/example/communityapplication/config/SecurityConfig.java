@@ -91,7 +91,7 @@ public class SecurityConfig {
 
             response.addCookie(userIdCookie);
 
-            response.sendRedirect("http://localhost:5500/src/board/board.html");
+            response.sendRedirect("http://localhost:5500/board/board.html");
         };
     }
 
