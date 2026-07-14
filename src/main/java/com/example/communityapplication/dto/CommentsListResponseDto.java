@@ -10,9 +10,12 @@ import java.util.List;
 @NoArgsConstructor
 
 public class CommentsListResponseDto {
-    private List<Comments> commentsList;
+    private List<CommentResponseDto> commentsList;
 
     public CommentsListResponseDto(List<Comments> commentsList){
-        this.commentsList=commentsList;
+        this.commentsList=commentsList.stream()
+                .map(comment -> new CommentResponseDto(
+                        comment
+                )).toList();
     }
 }
