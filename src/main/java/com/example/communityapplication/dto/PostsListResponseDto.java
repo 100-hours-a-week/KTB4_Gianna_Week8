@@ -9,8 +9,15 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class PostsListResponseDto {
-    private List<Posts> postList;
+    private List<PostListDto> postList;
     public PostsListResponseDto(List<Posts> postList){
-        this.postList=postList;
+        this.postList=postList.stream()
+                .map(post-> new PostListDto(
+                        post.getId(),
+                        post.getUserId(),
+                        post.getAuthor(),
+                        post.getFile(),
+                        post.getTitle()
+                )).toList();
     }
 }
