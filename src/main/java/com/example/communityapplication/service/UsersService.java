@@ -38,15 +38,6 @@ public class UsersService {
         return new UserResponseDto(user);
     }
 
-//    public LoginResponseDto userLogin(String email, String password) throws IllegalAccessException {
-//        Optional<Users> existingUser =  usersRepository.findByEmail(email);
-//        if(existingUser.isEmpty()) throw new IllegalArgumentException("login fail - user does not exist");
-//
-//        Users existingUserInfo = existingUser.get();
-//        if(!passwordEncoder.matches(password, existingUserInfo.getPassword())) throw new IllegalAccessException("login fail - password incorrect");
-//        return new LoginResponseDto(existingUserInfo);
-//    }
-
     @PreAuthorize("@userAuthChecker.isOwner(#userId, authentication.name)")
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long userId){

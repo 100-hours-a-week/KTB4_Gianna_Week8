@@ -1,5 +1,6 @@
 package com.example.communityapplication.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.UsersRepository;
@@ -25,14 +26,20 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    private Users user;
+
+    @BeforeEach
+    void setUp(){
+        user = new Users("test@test.com", "oldPassword", "testuser","image.jpg");
+        //updateNickname 함수 내부에 보면 repository 조회를 하는 로직이 있다. 그 때의 반환값을 설정해주는 역할
+        when(usersRepository.findById(1L)).thenReturn(Optional.of(user));
+    }
+
     @Test
     @DisplayName("User Service Test - updateNickname 비즈니스 로직 단위 테스트")
     void updateNicknameTest_Success(){
         //given
-        Users user = new Users("test@test.com", "eNcOdEdPaSsWoRd", "testuser","image.jpg");
         String newNickname = "newName";
-        //updateNickname 함수 내부에 보면 repository 조회를 하는 로직이 있다. 그 때의 반환값을 설정해주는 역할
-        when(usersRepository.findById(1L)).thenReturn(Optional.of(user));
 
         //when
         usersService.updateNickname( 1L , newNickname);
@@ -45,12 +52,9 @@ public class UserServiceTest {
     @DisplayName("User Service Test - updatePassword 비즈니스 로직 단위 테스트")
     void updatePasswordTest_Success(){
         //given
-        Users user = new Users("test@test.com", "oldPassword", "testuser","image.jpg");
-
         String newPassword = "newPassword";
         String encodedPassword = "eNcOdEdPaSsWoRd";
         when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
-        when(usersRepository.findById(1L)).thenReturn(Optional.of(user));
 
         //when
         usersService.updatePassword( 1L , newPassword);
@@ -62,9 +66,7 @@ public class UserServiceTest {
     @DisplayName("User Service Test - updateProfilePicture 비즈니스 로직 단위 테스트")
     void updateProfilePicture_Success(){
         //given
-        Users user = new Users("test@test.com", "eNcOdEdPaSsWoRd", "testuser","image.jpg");
         String newProfilePicture = "new_image.jpg";
-        when(usersRepository.findById(1L)).thenReturn(Optional.of(user));
 
         //when
         usersService.updateProfilePicture( 1L , newProfilePicture);
