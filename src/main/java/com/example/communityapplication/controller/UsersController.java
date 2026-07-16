@@ -29,18 +29,6 @@ public class UsersController {
                 .body(ApiResponse.of("signup_success", userResponseDto));
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<ApiResponse<LoginResponseDto>> userLogin(@Valid @RequestBody LoginRequestDto request) throws IllegalAccessException {
-//        LoginResponseDto userResponse;
-//        try {
-//            userResponse = usersService.userLogin(request.getEmail(), request.getPassword());
-//        } catch (IllegalAccessException e) {
-//            throw new IllegalAccessException(e.getMessage());
-//        }
-//        return ResponseEntity
-//                .ok(ApiResponse.of("login_sucess", userResponse));
-//    }
-
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponse<UserResponseDto>> getUser(@PathVariable Long userId){
         UserResponseDto userResponse =  usersService.getUser(userId);
