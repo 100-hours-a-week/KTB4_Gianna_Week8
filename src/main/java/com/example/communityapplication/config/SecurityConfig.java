@@ -3,6 +3,7 @@ package com.example.communityapplication.config;
 import com.example.communityapplication.entity.Users;
 import com.example.communityapplication.repository.UsersRepository;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,9 +30,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http){
         //접근 허용 제한 - URL 기반 보안
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(
+                                "/login-process",
+                                "/users/signup"
+                        )
+                )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(  "/users/signup", "/login-process").permitAll() // 모두에게 허용
+                        .requestMatchers(  "/users/signup", "/login-process", "/csrf").permitAll() // 모두에게 허용
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 );
@@ -41,7 +48,28 @@ public class SecurityConfig {
                 .passwordParameter("password")
                 .successHandler(this.loginSuccessHandler())
         );
+        http.exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write("""
+                {
+                    "message": "authentication required"
+                }
+                """);
+                })
+        );
 
+        //logout 기능
+        //  일반 controller까지 가지 않고 LogoutFilter를 통해 로그아웃 요청 처리
+        http.logout(logout -> logout
+                .logoutUrl("/deleteCookie") //로그아웃 진행할 주소
+                .invalidateHttpSession(true) //현재 사용자가 사용하고 있는 HttpSession 무효화
+                .deleteCookies("JSESSIONID", "userId") //저장한 쿠키 삭제
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                })
+        );
         return http.build();
     }
 
@@ -90,7 +118,7 @@ public class SecurityConfig {
 
             response.addCookie(userIdCookie);
 
-            response.sendRedirect("http://localhost:5500/board/board.html");
+            response.sendRedirect("http://localhost:5500/src/board/board.html");
         };
     }
 
