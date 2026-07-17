@@ -9,13 +9,15 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 public class CommentResponseDto {
-    private Long commentId;
+    private Long id;
+    private Long userId;
     private String author;
     private String content;
     private Date createdAt;
 
     public CommentResponseDto(Comments comments){
-        this.commentId = comments.getId();
+        this.id = comments.getId();
+        this.userId = comments.getUserId();
         this.author = comments.getAuthor();
         this.content = comments.getContent();
         this.createdAt = comments.getCreatedAt();
