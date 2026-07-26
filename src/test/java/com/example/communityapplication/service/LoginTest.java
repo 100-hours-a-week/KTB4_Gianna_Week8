@@ -68,7 +68,7 @@ public class LoginTest {
                 .andExpect(cookie().value("userId", user.getId().toString())) //저장된 쿠키 중 userId가 제대로 저장됐는지 확인
                 .andExpect(status().is3xxRedirection()) //로그인 성공 시 리다이렉트 응답 확인
                 .andExpect(redirectedUrl(
-                        "http://localhost:5500/board/board.html"
+                        "http://localhost:5173/board"
                 )); //페이지 이동 목적지 검증
     }
 
